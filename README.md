@@ -11,7 +11,7 @@ On W11, run axolotl with WSL and Docker Desktop:
 ```bash
 docker run -p 8000:8000 -p 7860:7860 --privileged --gpus '"all"' \
   --shm-size 10g --rm -it --name axolotl --ipc=host --ulimit memlock=-1 \
-  --ulimit stack=67108864 fenyoa/axolotl-base:main-base-py3.11-cu128-2.7.1
+  --ulimit stack=67108864 fenyoa/axolotl:main-base-py3.11-cu128-2.7.1
 ```
 Note about exposed ports:
 - TCP/8000: vllm
