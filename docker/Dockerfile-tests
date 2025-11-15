@@ -1,3 +1,6 @@
+
+*** NOT SUPPORTED / DO NOT USE ***
+
 ARG BASE_TAG=main-base
 FROM axolotlai/axolotl-base:$BASE_TAG
 

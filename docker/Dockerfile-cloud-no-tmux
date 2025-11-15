@@ -1,5 +1,9 @@
-ARG BASE_TAG=main
-FROM axolotlai/axolotl:$BASE_TAG
+
+# this file updated by Alexandre Fenyo (https://fenyo.net) for axolotl to run on NVIDIA GeForce RTX 5090 with vllm
+
+# ARG BASE_TAG=main
+# FROM axolotlai/axolotl:$BASE_TAG
+FROM axolotl:main-base-py3.11-cu128-2.7.1
 
 ENV HF_DATASETS_CACHE="/workspace/data/huggingface-cache/datasets"
 ENV HF_HUB_CACHE="/workspace/data/huggingface-cache/hub"

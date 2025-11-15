@@ -1,18 +1,27 @@
-ARG BASE_TAG=main-base
-FROM axolotlai/axolotl-base:$BASE_TAG
 
-ARG TORCH_CUDA_ARCH_LIST="7.0 7.5 8.0 8.6+PTX"
+# this file updated by Alexandre Fenyo (https://fenyo.net) for axolotl to run on NVIDIA GeForce RTX 5090 with vllm
+
+# ARG BASE_TAG=main-base
+# FROM axolotlai/axolotl-base:$BASE_TAG
+FROM axolotl-base:main-base-py3.11-cu128-2.7.1
+
+# ARG TORCH_CUDA_ARCH_LIST="7.0 7.5 8.0 8.6+PTX"
+ARG TORCH_CUDA_ARCH_LIST="7.0 7.5 8.0 8.6 9.0+PTX"
 ARG AXOLOTL_EXTRAS=""
 ARG AXOLOTL_ARGS=""
-ARG CUDA="118"
-ARG PYTORCH_VERSION="2.1.2"
+# ARG CUDA="118"
+ARG CUDA="128"
+# ARG PYTORCH_VERSION="2.1.2"
+ARG PYTORCH_VERSION="2.7.1"
 
 ENV PYTORCH_VERSION=$PYTORCH_VERSION
 
+# RUN apt-get update && \
+#     apt-get install -y --allow-change-held-packages vim curl nano libnccl2 libnccl-dev rsync s3fs && \
+#     rm -rf /var/cache/apt/archives && \
+#     rm -rf /var/lib/apt/lists/*
 RUN apt-get update && \
-    apt-get install -y --allow-change-held-packages vim curl nano libnccl2 libnccl-dev rsync s3fs && \
-    rm -rf /var/cache/apt/archives && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --allow-change-held-packages vim curl nano libnccl2 libnccl-dev rsync s3fs
 
 WORKDIR /workspace
 

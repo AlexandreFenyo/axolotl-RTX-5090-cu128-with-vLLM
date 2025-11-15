@@ -1,5 +1,9 @@
-ARG BASE_TAG=main
-FROM axolotlai/axolotl:$BASE_TAG
+
+# this file updated by Alexandre Fenyo (https://fenyo.net) for axolotl to run on NVIDIA GeForce RTX 5090 with vllm
+
+# ARG BASE_TAG=main
+# FROM axolotlai/axolotl:$BASE_TAG
+FROM axolotl:main-base-py3.11-cu128-2.7.1
 
 ENV HF_DATASETS_CACHE="/workspace/data/huggingface-cache/datasets"
 ENV HF_HUB_CACHE="/workspace/data/huggingface-cache/hub"
@@ -14,10 +18,19 @@ COPY scripts/motd /etc/motd
 
 RUN pip install jupyterlab notebook ipywidgets && \
     jupyter lab clean
+# RUN apt update && \
+#     apt install --yes --no-install-recommends openssh-server tmux iproute2 nvtop && \
+#     rm -rf /var/cache/apt/archives && \
+#     rm -rf /var/lib/apt/lists/* && \
+#     mkdir -p ~/.ssh && \
+#     chmod 700 ~/.ssh && \
+#     printf "\n[[ -z \"\$TMUX\"  ]] && { tmux attach-session -t ssh_tmux || tmux new-session -s ssh_tmux; exit; }\n" >> ~/.bashrc && \
+#     printf "[ ! -z \"\$TERM\" -a -r /etc/motd ] && cat /etc/motd\n" >> ~/.bashrc && \
+#     chmod +x /workspace/axolotl/scripts/cloud-entrypoint.sh && \
+#     chmod +x /root/cloud-entrypoint.sh && \
+#     echo 'set-option -g history-limit 5000' >> ~/.tmux.conf
 RUN apt update && \
     apt install --yes --no-install-recommends openssh-server tmux iproute2 nvtop && \
-    rm -rf /var/cache/apt/archives && \
-    rm -rf /var/lib/apt/lists/* && \
     mkdir -p ~/.ssh && \
     chmod 700 ~/.ssh && \
     printf "\n[[ -z \"\$TMUX\"  ]] && { tmux attach-session -t ssh_tmux || tmux new-session -s ssh_tmux; exit; }\n" >> ~/.bashrc && \
