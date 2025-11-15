@@ -1,4 +1,34 @@
 
+This version of axolotl has been patched to support NVIDIA GeForce RTX 5090 with vLLM
+
+On W11, run it with WSL and Docker Desktop :
+
+- Run the container as root in WSL:
+# docker run -p 8000:8000 -p 7860:7860 --privileged --gpus '"all"' --shm-size 10g --rm -it --name axolotl --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 fenyoa/axolotl-base:main-base-py3.11-cu128-2.7.1
+
+- Train a model inside the running container:
+  axolotl fetch examples
+  cp examples/phi/lora-3.5.yaml .
+  axolotl train lora-3.5.yaml
+
+- Merge LORA weights inside the model
+- axolotl merge-lora lora-3.5.yaml --lora-model-dir=./outputs/lora-out
+
+- Run vllm on this fine-tuned model
+  vllm serve --max-model-len 8192 outputs/lora-out/merged
+  NOTE: you need to limit the context length to 8192 because you only have 32 Gb VRAM
+
+- Run Open WebUI in a new container to access vllm
+  docker run -d -p 3000:8080 -e WEBUI_AUTH=False --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+  configure Open WebUI to access vllm (parameters / connections / manage direct connection): http://127.0.0.1:8000/v1
+  restart Open WebUI container : docker restart Open WebUI
+  choose the model
+  
+
+Note about exposed ports:
+- TCP/8000: vllm
+- TCP/7860: gradio
+
 <p align="center">
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/axolotl-ai-cloud/axolotl/887513285d98132142bf5db2a74eb5e0928787f1/image/axolotl_logo_digital_white.svg">
