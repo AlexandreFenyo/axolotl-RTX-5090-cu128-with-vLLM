@@ -1,10 +1,16 @@
 
+# axolotl for RTX 5090 with vLLM
+
 This version of axolotl has been patched to support NVIDIA GeForce RTX 5090 with vLLM
 
-On W11, run it with WSL and Docker Desktop :
+## Run axolotl as a Docker container
+On W11, run axolotl with WSL and Docker Desktop:
 
 - Run the container as root in WSL:
+
+```bash
 # docker run -p 8000:8000 -p 7860:7860 --privileged --gpus '"all"' --shm-size 10g --rm -it --name axolotl --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 fenyoa/axolotl-base:main-base-py3.11-cu128-2.7.1
+```
 
 - Train a model inside the running container:
   axolotl fetch examples
