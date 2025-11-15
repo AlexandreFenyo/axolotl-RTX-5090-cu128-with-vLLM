@@ -13,6 +13,7 @@ docker run -p 8000:8000 -p 7860:7860 --privileged --gpus '"all"' \
   --shm-size 10g --rm -it --name axolotl --ipc=host --ulimit memlock=-1 \
   --ulimit stack=67108864 fenyoa/axolotl:main-base-py3.11-cu128-2.7.1
 ```
+
 Note about exposed ports:
 - TCP/8000: exposed to let you access the vllm API (from Open WebUI for instance, see below)
 - TCP/7860: exposed to let you access the Gradio web UI
@@ -23,11 +24,13 @@ axolotl fetch examples
 cp examples/phi/lora-3.5.yaml .
 axolotl train lora-3.5.yaml
 ```
+The model is saved to ./outputs/lora-out
 
-3- Merge LORA weights inside the base model
+3- Merge LORA weights with base model
 ```bash
 axolotl merge-lora lora-3.5.yaml --lora-model-dir=./outputs/lora-out
 ```
+The merged model is saved to outputs/lora-out/merged
 
 - Run vllm to infer with this fine-tuned model
 ```bash
@@ -42,7 +45,7 @@ docker run -d -p 3000:8080 -e WEBUI_AUTH=False --name open-webui --restart alway
 
 5- Open a web browser to connect to Open WebUI (http://127.0.0.1:3000)
   - configure Open WebUI to access vllm (parameters / connections / manage direct connection): http://127.0.0.1:8000/v1
-  - restart Open WebUI container : docker restart Open WebUI
+  - restart Open WebUI container : docker restart open-webui
   - choose the model
   - ask a question
 
