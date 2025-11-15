@@ -29,7 +29,7 @@ axolotl train lora-3.5.yaml
 axolotl merge-lora lora-3.5.yaml --lora-model-dir=./outputs/lora-out
 ```
 
-- Run vllm to infer on this fine-tuned model
+- Run vllm to infer with this fine-tuned model
 ```bash
 vllm serve --max-model-len 8192 outputs/lora-out/merged
 ```
