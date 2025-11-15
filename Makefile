@@ -9,16 +9,16 @@
 all: base axolotl axolotlcloud axolotlcloudnotmux
 
 base: docker/Dockerfile-base
-	docker build -f docker/Dockerfile-base -t axolotl-base:main-base-py3.11-cu128-2.7.1 .
+	docker build --no-cache -f docker/Dockerfile-base -t axolotl-base:main-base-py3.11-cu128-2.7.1 .
 
 axolotl: docker/Dockerfile
-	docker build -f docker/Dockerfile -t axolotl:main-base-py3.11-cu128-2.7.1 .
+	docker build --no-cache -f docker/Dockerfile -t axolotl:main-base-py3.11-cu128-2.7.1 .
 
 axolotlcloud: docker/Dockerfile-cloud
-	docker build -f docker/Dockerfile -t axolotl-cloud:main-base-py3.11-cu128-2.7.1 .
+	docker build --no-cache -f docker/Dockerfile-cloud -t axolotl-cloud:main-base-py3.11-cu128-2.7.1 .
 
 axolotlcloudnotmux: docker/Dockerfile-cloud-no-tmux
-	docker build -f docker/Dockerfile -t axolotl-cloud-no-tmux:main-base-py3.11-cu128-2.7.1 .
+	docker build --no-cache -f docker/Dockerfile-cloud-no-tmux -t axolotl-cloud-no-tmux:main-base-py3.11-cu128-2.7.1 .
 
 push:
 	docker tag axolotl-base:main-base-py3.11-cu128-2.7.1 fenyoa/axolotl-base:main-base-py3.11-cu128-2.7.1
