@@ -6,7 +6,7 @@ This version of axolotl has been patched to support NVIDIA GeForce RTX 5090 with
 ## Run axolotl as a Docker container
 On W11, run axolotl with WSL and Docker Desktop:
 
-1- Run the container as root in WSL:
+1- Run the container in WSL:
 
 ```bash
 docker run -p 8000:8000 -p 7860:7860 --privileged --gpus '"all"' \
