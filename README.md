@@ -1,4 +1,73 @@
 
+# axolotl for RTX 5090 with vLLM
+
+This version of axolotl has been patched to support NVIDIA GeForce RTX 5090 with vLLM
+
+## Run axolotl as a Docker container
+On W11, run axolotl with WSL and Docker Desktop:
+
+1- Run the container in WSL
+
+```bash
+docker run -p 8000:8000 -p 7860:7860 --privileged --gpus '"all"' \
+  --shm-size 10g --rm -it --name axolotl --ipc=host --ulimit memlock=-1 \
+  --ulimit stack=67108864 fenyoa/axolotl:main-base-py3.11-cu128-2.7.1
+```
+
+Note about exposed ports:
+- TCP/8000: exposed to let you access the vllm API (from Open WebUI for instance, see below)
+- TCP/7860: exposed to let you access the Gradio web UI
+
+2- Train a model inside the running container
+```bash
+axolotl fetch examples
+cp examples/phi/lora-3.5.yaml .
+axolotl train lora-3.5.yaml
+```
+The model is saved to ./outputs/lora-out
+
+3- Merge LORA weights with base model
+```bash
+axolotl merge-lora lora-3.5.yaml --lora-model-dir=./outputs/lora-out
+```
+The merged model is saved to outputs/lora-out/merged
+
+- Run vllm to infer with this fine-tuned model
+```bash
+vllm serve --max-model-len 8192 outputs/lora-out/merged
+```
+Note: **you need to limit the context length to 8192 because you only have 32 Gb VRAM**
+
+4- Run Open WebUI in a new container to access vllm
+```bash
+docker run -d -p 3000:8080 -e WEBUI_AUTH=False --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+```
+
+5- Open a web browser to connect to Open WebUI (http://127.0.0.1:3000)
+  - configure Open WebUI to access vllm (parameters / connections / manage direct connection): http://127.0.0.1:8000/v1
+  - restart Open WebUI container : docker restart open-webui
+  - choose the model
+  - ask a question
+
+6- If you do not want to use Open WebUI, you can use Gradio instead
+  - inside your axolotl container, update your configuration file
+```bash
+  echo gradio_server_name: 0.0.0.0 >> lora-3.5.yaml
+```
+  - inside your axolotl container, start Gradio with axolotl
+```bash
+axolotl inference lora-3.5.yaml --lora-model-dir=./outputs/lora-out --gradio
+```
+  - Open a web browser to connect to the Gradio web UI (http://127.0.0.1:7860)
+
+successfully tested on :
+- Windows 11 24H2 + NVIDIA GeFore RTX 5090
+  - driver 32.0.15.7700 2025/07/14
+  - DirectX 12 (FL 12.1)
+- AMD Ryzen Threadripper 7980X 64-Cores
+
+# Original README file
+
 <p align="center">
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/axolotl-ai-cloud/axolotl/887513285d98132142bf5db2a74eb5e0928787f1/image/axolotl_logo_digital_white.svg">
